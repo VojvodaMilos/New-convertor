@@ -6,7 +6,8 @@ const Select = (props) => {
 
         onchangeValue,
         selectCurrency,
-        onChangeCurrency
+        onChangeCurrency,
+        amount
     } = props
 
     return (
@@ -15,18 +16,18 @@ const Select = (props) => {
                 {
                     allCurrency.map(a => {
                         return <option key={a} value={a}>{a}</option>
-                        console.log(a);
+
                     })
                 }
 
             </select>
             <input
-                // value={fromCurrency}
-                // onChange={onchangeValue}
+                value={amount}
+                onChange={onchangeValue}
                 type="number"
                 className="input"
             />
-        </>  git status
+        </>
 
 
     )

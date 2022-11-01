@@ -6,7 +6,10 @@ import { useEffect, useState } from "react";
 function App() {
   const [allCurrency, setAllCurrency] = useState([])
   const [fromCurrency, setFromCurrency] = useState()
-  const [toCurrency, setToCurrency] = useState()
+  const [toCurrency, setToCurrency] = useState();
+  const [amount, setAmount] = useState(1);
+  const [exchangeRate, setExchangeRate] = useState();
+  const [amountInfromCurrency, setAmountInFromCurrency] = useState(true);
 
 
   useEffect(() => {
@@ -21,18 +24,49 @@ function App() {
 
       })
   }, []
+
   )
-  // console.log(allCurrency);
+
+
+  useEffect(() => {
+    fetch(`https://api.exchangerate.host/latest?base=${fromCurrency}&symbols=${toCurrency}`).
+      then(res => res.json()).
+      then(data => {
+        setExchangeRate(data.rates[toCurrency])
+      })
+  }, [fromCurrency, toCurrency]
+  )
+
+  let toAmount, fromAmount
+  if (amountInfromCurrency) {
+    fromAmount = amount;
+    toAmount = amount * exchangeRate
+  } else {
+    toAmount = amount
+    fromAmount = amount / exchangeRate
+  }
+
+  const handleFromAmount = (e) => {
+    setAmount(e.target.value);
+    setAmountInFromCurrency(true)
+  }
+
+  const handleToAmount = (e) => {
+    setAmount(e.target.value);
+    setAmountInFromCurrency(false)
+  }
 
   return (
     <div className="converter">
       <h1>CYRRENCY CONVERTOR</h1>
       <div className="monete">
         <div className="left">
-          <Select allCurrency={allCurrency}
+          <Select
+            allCurrency={allCurrency}
             selectCurrency={fromCurrency}
             onChangeCurrency={e => setFromCurrency(e.target.value)}
-
+            amount={fromAmount}
+            onchangeValue={e => handleFromAmount(e)}
           />
 
 
@@ -47,6 +81,8 @@ function App() {
           <Select allCurrency={allCurrency}
             selectCurrency={toCurrency}
             onChangeCurrency={e => setToCurrency(e.target.value)}
+            amount={toAmount}
+            onchangeValue={e => handleToAmount(e)}
           />
 
 
